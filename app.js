@@ -13,7 +13,7 @@ const app = express();
 mongoose.set("strictQuery", false);
 
 const mongoDB =
-  "mongodb+srv://jinitsuga:qweasd356@talentscluster.o0zdqp1.mongodb.net/test";
+  "mongodb+srv://jinitsuga:<pw>@talentscluster.o0zdqp1.mongodb.net/test";
 
 main().catch((err) => console.log(err));
 async function main() {
