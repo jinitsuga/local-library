@@ -11,7 +11,7 @@ const usersRouter = require("./routes/users");
 const app = express();
 
 mongoose.set("strictQuery", false);
-
+console.log(process.env.DB_DATA);
 const mongoDB =
   "mongodb+srv://jinitsuga:<pw>@talentscluster.o0zdqp1.mongodb.net/test";
 
