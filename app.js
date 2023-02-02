@@ -11,9 +11,10 @@ const usersRouter = require("./routes/users");
 const app = express();
 
 mongoose.set("strictQuery", false);
+
 console.log(process.env.DB_DATA);
-const mongoDB =
-  "mongodb+srv://jinitsuga:<pw>@talentscluster.o0zdqp1.mongodb.net/test";
+
+const mongoDB = process.env.DB_DATA;
 
 main().catch((err) => console.log(err));
 async function main() {
@@ -48,5 +49,8 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render("error");
 });
+
+// Defining Mongoose stuff (schemas, etc) probably should go on a different file
+const Schema = mongoose.Schema;
 
 module.exports = app;
