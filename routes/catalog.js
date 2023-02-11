@@ -30,3 +30,16 @@ router.post("/book/:id/update", book_controller.book_update_post);
 router.get("/book/:id", book_controller.book_details);
 
 router.get("/books", book_controller.book_list);
+
+// --- Author routes ---
+
+// creation
+router.get("/author/create", author_controller.author_create_get);
+router.post("/author/create", author_controller.author_create_post);
+
+// deletion
+router.get("/author/:id/delete", author_controller.author_dele);
+
+// update
+
+// details and list of authors

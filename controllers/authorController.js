@@ -30,3 +30,13 @@ exports.author_update_get = (req, res) => {
 exports.author_update_post = (req, res) => {
   res.send("not implemented: author update POST");
 };
+
+// deleting form
+exports.author_delete_get = (req, res) => {
+  res.send("not implemented: author deletion form");
+};
+
+// post deletion to db
+exports.author_delete_post = (req, res) => {
+  res.send("not implemented: author deletion post");
+};
