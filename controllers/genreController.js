@@ -7,7 +7,7 @@ exports.genre_list = (req, res) => {
 
 // Display specific details of a genre
 exports.genre_details = (req, res) => {
-  res.send("not implemented: genre details");
+  res.send(`not implemented: genre details ${req.params.id}`);
 };
 
 // Show genre creation form
