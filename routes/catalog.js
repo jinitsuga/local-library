@@ -49,3 +49,22 @@ router.post("/author/:id/update", author_controller.author_update_post);
 router.get("/author/:id", author_controller.author_details);
 
 router.get("/authors", author_controller.author_list);
+
+// -- Genre routes --
+
+// create genre
+router.get("/genre/create", genre_controller.genre_create_get);
+router.post("/genre/create", genre_controller.genre_create_post);
+
+// delete genre
+router.get("/genre/:id/delete", genre_controller.genre_delete_get);
+router.post("genre/:id/delete", genre_controller.genre_delete_post);
+
+// update genre
+router.get("/genre/:id/update", genre_controller.genre_update_get);
+router.post("/genre/:id/update", genre_controller.genre_update_post);
+
+// details and list of genres
+router.get("/genre/:id", genre_controller.genre_details);
+
+router.get("/genres", genre_controller.genre_list);
