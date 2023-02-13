@@ -8,7 +8,7 @@ exports.bookinstance_list = (req, res) => {
 
 // specific book instance
 
-exports.bookinstance_detail = (req, res) => {
+exports.bookinstance_details = (req, res) => {
   res.send(`not implemented: details of specific book ${req.params.id}`);
 };
 

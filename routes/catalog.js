@@ -68,3 +68,40 @@ router.post("/genre/:id/update", genre_controller.genre_update_post);
 router.get("/genre/:id", genre_controller.genre_details);
 
 router.get("/genres", genre_controller.genre_list);
+
+// -- Book instances routes --
+
+// create
+router.get(
+  "/bookinstance/create",
+  book_instance_controller.bookinstance_create_get
+);
+router.post(
+  "/bookinstance/create",
+  book_instance_controller.bookinstance_create_post
+);
+
+//delete
+router.get(
+  "/bookinstance/:id/delete",
+  book_instance_controller.bookinstance_delete_get
+);
+router.post(
+  "/bookinstance/:id/delete",
+  book_instance_controller.bookinstance_delete_post
+);
+
+// update
+router.get(
+  "/bookinstance/:id/update",
+  book_instance_controller.bookinstance_update_get
+);
+router.post(
+  "/bookinstance/:id/update",
+  book_instance_controller.bookinstance_update_post
+);
+
+// details and all instances
+router.get("/bookinstance/:id", book_instance_controller.bookinstance_details);
+
+router.get("/bookinstances", book_instance_controller.bookinstance_list);
