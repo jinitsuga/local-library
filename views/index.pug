@@ -12,4 +12,30 @@ html(lang='en')
   body
     div(class='container-fluid')
       div(class='row')
-       div(class='row-sm-2')
+       div(class='col-sm-2')
+         block sidebar
+           ul(class='sidebar-nav')
+            li 
+              a(href='/catalog') Home
+            li 
+              a(href="/catalog/books") ALL books
+            li 
+              a(href="/catalog/authors") ALL authors 
+            li 
+              a(href="/catalog/genres") ALL genres 
+            li 
+              a(href="/catalog/bookinstances") ALL book instances 
+            li 
+              hr
+            li 
+              a(href="/catalog/book/create") Create new book 
+            li 
+              a(href="/catalog/author/create") Create new author 
+            li 
+              a(href="/catalog/genre/create") Create new genre
+            li 
+              a(href="/catalog/bookinstance/create") Create new book instance (copy)
+       div(class="col-sm-10")
+          block content
+          
+          
