@@ -3,7 +3,7 @@ const Book = require("../models/book");
 // shows welcome/index page
 
 exports.index = (req, res) => {
-  res.send("not implemented: index homepage");
+  res.send("not implemented: index OMEGALUL");
 };
 
 // show list of all books
