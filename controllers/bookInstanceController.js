@@ -2,8 +2,19 @@ const BookInstance = require("../models/bookInstance");
 
 // all book instances
 
-exports.bookinstance_list = (req, res) => {
-  res.send("not implemented: list of all books instances");
+// "exec() method executes the provided function, taking error as the first argument and the query's result as the second"
+exports.bookinstance_list = (req, res, next) => {
+  BookInstance.find()
+    .populate("book")
+    .exec(function (err, list_instances) {
+      if (err) {
+        next(err);
+      }
+      res.render("bookinstance_list", {
+        title: "Book copies list",
+        book_instances_list: list_instances,
+      });
+    });
 };
 
 // specific book instance
