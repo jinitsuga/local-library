@@ -1,9 +1,39 @@
 const Book = require("../models/book");
+const Author = require("../models/author");
+const Genre = require("../models/genre");
+const BookInstance = require("../models/bookInstance");
+
+const async = require("async");
 
 // shows welcome/index page
 
 exports.index = (req, res) => {
-  res.send("not implemented: index OMEGALUL");
+  async.parallel(
+    {
+      book_count(cb) {
+        Book.countDocuments({}, cb);
+      },
+      author_count(cb) {
+        Author.countDocuments({}, cb);
+      },
+      genre_count(cb) {
+        Genre.countDocuments({}, cb);
+      },
+      book_instance_available_count(cb) {
+        BookInstance.countDocuments({ status: "Available" }, cb);
+      },
+      book_instance_count(cb) {
+        BookInstance.countDocuments({}, cb);
+      },
+    },
+    (err, results) => {
+      res.render("index", {
+        title: "Local Library Home",
+        error: err,
+        data: results,
+      });
+    }
+  );
 };
 
 // show list of all books
