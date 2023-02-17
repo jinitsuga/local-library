@@ -6,7 +6,7 @@ exports.genre_list = (req, res, next) => {
     if (err) {
       next(err);
     }
-    res.send("genre_list", {
+    res.render("genre_list", {
       title: "List of genres",
       genre_list: listed_genres,
     });
