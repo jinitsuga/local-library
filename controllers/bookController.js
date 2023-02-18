@@ -38,20 +38,46 @@ exports.index = (req, res) => {
 
 // show list of all books
 exports.book_list = (req, res, next) => {
-  Book.find({}, "title author")
-    .sort({ title: 1 })
-    .populate("author")
-    .exec(function (err, list_books) {
+  async.parallel(
+    {
+      book(callback) {
+        Book.findById(req.params.id)
+          .populate("author")
+          .populate("genre")
+          .exec(callback);
+      },
+      book_instance(callback) {
+        BookInstance.find({ book: req.params.id }).exec(callback);
+      },
+    },
+    (err, results) => {
       if (err) {
+        next(err);
+      }
+      if (results.book == null) {
+        const err = new Error("book not found");
+        err.status = 404;
         return next(err);
       }
-      res.render("book_list", { title: "Book List", book_list: list_books });
-    });
+      res.render("book_detail", {
+        title: results.book.title,
+        book: results.book,
+        copies: results.book_instance,
+      });
+    }
+  );
 };
 
 // show details of specific book
-exports.book_details = (req, res) => {
-  res.send(`not implemented: book details ${req.params.id}`);
+exports.book_details = (req, res, next) => {
+  Book.findById(req.params.id).exec(function (err, result) {
+    if (err) {
+      next(err);
+    }
+    res.render("book_detail", {
+      book: result,
+    });
+  });
 };
 
 // show book creation form
