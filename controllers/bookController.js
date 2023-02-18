@@ -38,6 +38,19 @@ exports.index = (req, res) => {
 
 // show list of all books
 exports.book_list = (req, res, next) => {
+  Book.find({}, "title author")
+    .sort({ title: 1 })
+    .populate("author")
+    .exec(function (err, list_books) {
+      if (err) {
+        return next(err);
+      }
+      res.render("book_list", { title: "Book List", book_list: list_books });
+    });
+};
+
+// show details of specific book
+exports.book_details = (req, res, next) => {
   async.parallel(
     {
       book(callback) {
@@ -67,19 +80,6 @@ exports.book_list = (req, res, next) => {
     }
   );
 };
-
-// show details of specific book
-exports.book_details = (req, res, next) => {
-  Book.findById(req.params.id).exec(function (err, result) {
-    if (err) {
-      next(err);
-    }
-    res.render("book_detail", {
-      book: result,
-    });
-  });
-};
-
 // show book creation form
 exports.book_create_get = (req, res) => {
   res.send("not implemented: book create form");

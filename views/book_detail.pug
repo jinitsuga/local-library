@@ -1,0 +1,17 @@
+extends layout 
+
+block content 
+    title= title
+
+    span #{book.name}
+    span #{book.genre} 
+
+    h4 Copies 
+        ul 
+            each copy in copies 
+                li 
+                    a(href=copy.url) #{copy.title} #{copy.imprint}
+                    p #{copy.status} 
+            else 
+                p No copies of this book.         
+              
