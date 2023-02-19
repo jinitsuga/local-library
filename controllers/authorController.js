@@ -1,4 +1,5 @@
 const Author = require("../models/author");
+const Book = require("../models/book");
 
 // All authors
 exports.author_list = (req, res, next) => {
@@ -16,8 +17,31 @@ exports.author_list = (req, res, next) => {
 };
 
 // Specific author details
-exports.author_details = (req, res) => {
-  res.send(`NOt implemented: author details: ${req.params.id}`);
+exports.author_details = (req, res, next) => {
+  async.parallel(
+    {
+      author(callback) {
+        Author.findById(req.params.id).exec(callback);
+      },
+      author_books(callback) {
+        Book.find({ author: req.params.id }, "title summary").exec(callback);
+      },
+    },
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+      if (results.author == null) {
+        const err = new Error("Author not found");
+        err.status = 404;
+        return next(err);
+      }
+      res.render("author_detail", {
+        author: results.author,
+        books_author: results.author_books,
+      });
+    }
+  );
 };
 
 // Send form to create an author

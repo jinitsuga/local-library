@@ -3,8 +3,9 @@ extends layout
 block content 
     title= title
 
-    span #{book.name}
-    span #{book.genre} 
+    span  #{book.title}
+
+    span  #{book.genre.name} 
 
     h4 Copies 
         ul 
