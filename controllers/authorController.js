@@ -2,6 +2,12 @@ const Author = require("../models/author");
 const Book = require("../models/book");
 const async = require("async");
 
+// validator library for the form
+const validator = require("express-validator");
+
+const body = validator.body;
+const validationResult = validator.validationResult;
+
 // All authors
 exports.author_list = (req, res, next) => {
   Author.find()
@@ -47,14 +53,58 @@ exports.author_details = (req, res, next) => {
 
 // Send form to create an author
 exports.author_create_get = (req, res) => {
-  res.send("Not implemented: Author create GET");
+  res.render("author_form", { title: "Add an author" });
 };
 
 // Send POST data to create the author to the DB
 
-exports.author_create_post = (req, res) => {
-  res.send("Not implemented: author create POST");
-};
+exports.author_create_post = [
+  body("first_name")
+    .trim()
+    .isLength({ min: 1 })
+    .escape()
+    .withMessage("Must include first name")
+    .isAlphanumeric()
+    .withMessage("first name contains non-alphanumeric values"),
+  body("family_name")
+    .trim()
+    .isLength({ min: 1 })
+    .escape()
+    .withMessage("Must include family name")
+    .isAlphanumeric()
+    .withMessage("family name contains non alphanumeric values"),
+  body("birth_date", "Invalid date of birth")
+    .optional({ checkFalsy: true })
+    .isISO8601()
+    .toDate(),
+  body("death_date", "Invalid date of death")
+    .optional({ checkFalsy: true })
+    .isISO8601()
+    .toDate(),
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.render("author_form", {
+        title: "Add an author",
+        errors: errors.array(),
+        author: req.body,
+      });
+      return;
+    }
+    // Data is valid
+    const author = new Author({
+      first_name: req.body.first_name,
+      family_name: req.body.family_name,
+      birth_date: req.body.birth_date,
+      death_date: req.body.death_date,
+    });
+    author.save((err) => {
+      if (err) {
+        return next(err);
+      }
+    });
+  },
+];
 
 // display author update form
 exports.author_update_get = (req, res) => {
