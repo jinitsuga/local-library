@@ -2,6 +2,12 @@ const Genre = require("../models/genre");
 const Book = require("../models/book");
 const async = require("async");
 
+// Importing form validation library
+const validator = require("express-validator");
+
+const body = validator.body;
+const validationResult = validator.validationResult;
+
 // Shows list of all genres
 exports.genre_list = (req, res, next) => {
   Genre.find().exec(function (err, listed_genres) {
@@ -47,14 +53,52 @@ exports.genre_details = (req, res, next) => {
 };
 
 // Show genre creation form
-exports.genre_create_get = (req, res) => {
-  res.send("not implemented: genre creation form");
+exports.genre_create_get = (req, res, next) => {
+  res.render("genre_form", { title: "Add a genre" });
 };
 
 // Create the genre on the DB from creation form (post)
-exports.genre_create_post = (req, res) => {
-  res.send("not implemented: genre creation on db");
-};
+
+// Passing an array of middleware that will be executed in order on the request.
+// This is necessary since the validators are middleware functions
+
+exports.genre_create_post = [
+  body("name", "Genre name required").trim().isLength({ min: 1 }).escape(),
+  (req, res, next) => {
+    // Extract the validation errors from a request.
+    const errors = validationResult(req);
+
+    // Create a genre object with escaped and trimmed data.
+    const genre = new Genre({ name: req.body.name });
+
+    if (!errors.isEmpty()) {
+      res.render("genre_form", {
+        title: "Add a genre",
+        genre,
+        errors: errors.array(),
+      });
+      return;
+    } else {
+      // Data from form is valid, so check if genre exists in db
+      Genre.findOne({ name: req.body.name }).exec((err, found_genre) => {
+        if (err) {
+          return next(err);
+        }
+        if (found_genre) {
+          // Found a genre with the name, so there's already one in db
+          res.redirect(found_genre.url);
+        } else {
+          genre.save((err) => {
+            if (err) {
+              return next(err);
+            }
+            res.redirect(genre.url);
+          });
+        }
+      });
+    }
+  },
+];
 
 // show genre delete form
 exports.genre_delete_get = (req, res) => {
