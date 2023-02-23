@@ -3,6 +3,10 @@ const Author = require("../models/author");
 const Genre = require("../models/genre");
 const BookInstance = require("../models/bookInstance");
 
+const validator = require("express-validator");
+const body = validator.body;
+const validationResult = validator.validationResult;
+
 const async = require("async");
 
 // shows welcome/index page
@@ -81,8 +85,28 @@ exports.book_details = (req, res, next) => {
   );
 };
 // show book creation form
-exports.book_create_get = (req, res) => {
-  res.send("not implemented: book create form");
+exports.book_create_get = (req, res, next) => {
+  // grab all authors and genres to add to our book
+  async.parallel(
+    {
+      authors(callback) {
+        Author.find(callback);
+      },
+      genres(callback) {
+        Genre.find(callback);
+      },
+    },
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+      res.render("book_form", {
+        title: "Add a book",
+        genres: results.genres,
+        authors: results.authors,
+      });
+    }
+  );
 };
 
 // post book created on DB
