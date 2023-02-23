@@ -110,9 +110,74 @@ exports.book_create_get = (req, res, next) => {
 };
 
 // post book created on DB
-exports.book_create_post = (req, res) => {
-  res.send("not implemented: book posted on DB");
-};
+exports.book_create_post = [
+  (req, res, next) => {
+    // turn genre(s) into an arrray, since a book can have multiple genres (only 1 author)
+    if (!Array.isArray(req.body.genre)) {
+      req.body.genre =
+        typeof req.body.genre === "undefined" ? [] : [req.body.genre];
+    }
+    next();
+  },
+  // validating fields
+  body("title", "Must enter a title").trim().isLength({ min: 1 }).escape(),
+  body("author", "Must enter an author").trim().isLength({ min: 1 }).escape(),
+  body("summary", "Must enter a summary").trim().isLength({ min: 1 }).escape(),
+  body("isbn", "ISBN can't be empty").trim().isLength({ min: 1 }).escape(),
+  body("genre.*").escape(),
+
+  // After validation, process the request accordingly
+  (req, res, next) => {
+    const errors = validationResult(req);
+
+    const book = new Book({
+      title: req.body.title,
+      author: req.body.author,
+      summary: req.body.summary,
+      isbn: req.body.isbn,
+      genre: req.body.genre,
+    });
+
+    if (!errors.isEmpty()) {
+      // if errors exist, render form again
+      async.parallel(
+        {
+          authors(callback) {
+            Author.find(callback);
+          },
+          genres(callback) {
+            Genre.find(callback);
+          },
+        },
+        (err, results) => {
+          if (err) {
+            return next(err);
+          }
+          for (const genre of results.genre) {
+            if (book.genre.includes(genre._id)) {
+              genre.checked = "true";
+            }
+          }
+          res.render("book_form", {
+            title: "Add a book",
+            authors: results.authors,
+            genres: results.genres,
+            book,
+            errors: errors.array(),
+          });
+        }
+      );
+      return;
+    }
+    // data from form is valid, save book
+    book.save((err) => {
+      if (err) {
+        return next(err);
+      }
+      res.redirect(book.url);
+    });
+  },
+];
 
 // show book deletion form
 exports.book_delete_get = (req, res) => {
