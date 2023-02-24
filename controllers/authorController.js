@@ -117,8 +117,31 @@ exports.author_update_post = (req, res) => {
 };
 
 // deleting form
-exports.author_delete_get = (req, res) => {
-  res.send("not implemented: author deletion form");
+exports.author_delete_get = (req, res, next) => {
+  async.parallel(
+    {
+      author(callback) {
+        Author.findById(req.params.id).exec(callback);
+      },
+      author_books(callback) {
+        Book.find({ author: req.params.id }).exec(callback);
+      },
+    },
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+      if (results.author == null) {
+        res.redirect("/catalog/authors");
+      }
+
+      res.render("author_delete", {
+        title: "Delete an author",
+        author: results.author,
+        author_books: results.author_books,
+      });
+    }
+  );
 };
 
 // post deletion to db

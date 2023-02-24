@@ -46,18 +46,16 @@ exports.bookinstance_details = (req, res, next) => {
 // display bookinstance creation form
 
 exports.bookinstance_create_get = (req, res, next) => {
-  Book.find({}, "title").exec(
-    (err,
-    (books) => {
-      if (err) {
-        return next(err);
-      }
-      res.render("bookinstance_form", {
-        title: "Add a book copy",
-        book_list: books,
-      });
-    })
-  );
+  Book.find({}, "title").exec((err, books) => {
+    if (err) {
+      return next(err);
+    }
+    // Successful, so render.
+    res.render("bookinstance_form", {
+      title: "Add a book",
+      book_list: books,
+    });
+  });
 };
 
 // Post bookinstance in the DB
@@ -96,7 +94,7 @@ exports.bookinstance_create_post = [
       });
       return;
     }
-    // data is valid, save copy to db
+    // data is valid, save copy to db and redirect to book copy page
     bookInstance.save((err) => {
       if (err) {
         return next(err);
