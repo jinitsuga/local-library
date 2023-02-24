@@ -145,6 +145,36 @@ exports.author_delete_get = (req, res, next) => {
 };
 
 // post deletion to db
-exports.author_delete_post = (req, res) => {
-  res.send("not implemented: author deletion post");
+exports.author_delete_post = (req, res, next) => {
+  async.parallel(
+    {
+      author(callback) {
+        Author.findById(req.body.authorid).exec(callback);
+      },
+      author_books(callback) {
+        Book.find({ author: req.body.authorid }).exec(callback);
+      },
+    },
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+      if (results.author_books.length > 0) {
+        // If there are books with the selected author, can't delete, sends back to form.
+        res.render("author_delete", {
+          title: "Delete an author",
+          author: results.author,
+          author_books: results.author_books,
+        });
+        return;
+      }
+      // author has no books, find and remove
+      Author.findByIdAndRemove(req.body.authorid, (err) => {
+        if (err) {
+          return next(err);
+        }
+        res.redirect("/catalog/authors");
+      });
+    }
+  );
 };
