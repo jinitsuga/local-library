@@ -1,0 +1,19 @@
+extends layout 
+
+block content 
+
+    h1= title
+
+    h2= genre.name
+
+    if genre_books.length
+        p Delete the following books before removing this genre:
+        each book in genre_books 
+
+            
+            ul 
+                li 
+                    a(href=book.url) #{book.title}
+
+    else 
+        p No books of this genre.

@@ -180,9 +180,7 @@ exports.book_create_post = [
 ];
 
 // show book deletion form
-exports.book_delete_get = (req, res) => {
-  res.send("not implemented: book deletion form");
-};
+exports.book_delete_get = (req, res) => {};
 
 // post book deletion on DB
 exports.book_delete_post = (req, res) => {

@@ -101,8 +101,31 @@ exports.genre_create_post = [
 ];
 
 // show genre delete form
-exports.genre_delete_get = (req, res) => {
-  res.send("not implemented: deletion form");
+exports.genre_delete_get = (req, res, next) => {
+  async.parallel(
+    {
+      genre(callback) {
+        Genre.findById(req.params.id).exec(callback);
+      },
+      genre_books(callback) {
+        Book.find({ genre: req.params.id }).exec(callback);
+      },
+    },
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+      if (results.genre == null) {
+        res.redirect("/catalog/genres");
+      }
+
+      res.render("genre_delete", {
+        title: "Delete a genre",
+        genre: results.genre,
+        genre_books: results.genre_books,
+      });
+    }
+  );
 };
 
 // send deletion post to DB
