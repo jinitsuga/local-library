@@ -16,4 +16,9 @@ block content
                     a(href=book.url) #{book.title}
 
     else 
-        p No books of this genre.
+        p No books of this genre. Do you want to delete it?
+        form(method='POST' action='')
+            div.form-group
+                input#authorid.form-control(type='hidden', name='authorid', required='true', value=genre._id)
+            
+            button.btn.btn-primary(type='submit') Delete
