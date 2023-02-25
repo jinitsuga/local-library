@@ -4,6 +4,7 @@ const async = require("async");
 
 // Importing form validation library
 const validator = require("express-validator");
+const { restart } = require("nodemon");
 
 const body = validator.body;
 const validationResult = validator.validationResult;
@@ -129,8 +130,36 @@ exports.genre_delete_get = (req, res, next) => {
 };
 
 // send deletion post to DB
-exports.genre_delete_post = (req, res) => {
-  res.send("not implemented: post deletion to db");
+exports.genre_delete_post = (req, res, next) => {
+  async.parallel(
+    {
+      genre(callback) {
+        Genre.findById(req.params.genreid).exec(callback);
+      },
+      genre_books(callback) {
+        Book.find({ genre: req.params.genreid }).exec(callback);
+      },
+    },
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+      if (results.genre_books.length > 0) {
+        res.render("genre_delete", {
+          title: "Delete a genre",
+          genre: results.genre,
+          genre_books: results.genre_books,
+        });
+        return;
+      }
+      Genre.findByIdAndRemove(req.params.genreid, (err) => {
+        if (err) {
+          return next(err);
+        }
+        res.redirect("/catalog/genres");
+      });
+    }
+  );
 };
 
 // show update genre form
